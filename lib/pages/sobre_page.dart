@@ -21,9 +21,16 @@ class SobrePage extends StatelessWidget {
               children: [
                 Container(
                   width: double.infinity,
-                  color: const Color(0xFF004A9B),
+                  padding: const EdgeInsets.only(top: 16),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [azulPrincipal, azulEscuro],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
                   alignment: Alignment.bottomCenter,
-                  child: const IlustracaoEquipe(altura: 170, esmaecerTopo: false),
+                  child: const IlustracaoEquipe(altura: 170),
                 ),
                 const Padding(
                   padding: EdgeInsets.all(20),

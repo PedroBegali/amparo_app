@@ -87,8 +87,6 @@ class _DashboardPageState extends State<DashboardPage> {
     return "Boa noite,";
   }
 
-  String get nomeExibicao => "${agente.isGestor ? "Gestor" : "Agente"} ${agente.primeiroNome}";
-
   void irParaAba(int aba, {String? filtro}) {
     setState(() {
       abaAtual = aba;
@@ -327,95 +325,141 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget cabecalhoInicio() {
-    return Container(
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [azulPrincipal, azulEscuro],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(28)),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
-        children: [
-          const Positioned(right: 0, bottom: 0, child: IlustracaoEquipe(altura: 140)),
-          Padding(
-            padding: EdgeInsets.fromLTRB(20, MediaQuery.of(context).padding.top + 16, 8, 64),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+    final topo = MediaQuery.of(context).padding.top;
+    return LayoutBuilder(
+      builder: (context, restricoes) {
+        final largura = restricoes.maxWidth;
+        final larguraImagem = largura * 0.64;
+        final alturaImagem = larguraImagem * 278 / 420;
+        return Container(
+          width: double.infinity,
+          constraints: BoxConstraints(minHeight: topo + 64 + alturaImagem),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [azulPrincipal, azulEscuro],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(28)),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Stack(
+            children: [
+              Positioned(
+                right: -largura * 0.06,
+                bottom: 0,
+                child: IlustracaoEquipe(altura: alturaImagem),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(20, topo + 16, 8, 60),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const LogoAmparo(tamanho: 42, clara: true),
-                    const Spacer(),
-                    IconButton(
-                      tooltip: "Alertas",
-                      onPressed: () => irParaAba(2),
-                      icon: Badge(
-                        isLabelVisible: criticos > 0,
-                        smallSize: 10,
-                        backgroundColor: corCritico,
-                        child: const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 28),
-                      ),
+                    Row(
+                      children: [
+                        const LogoAmparo(tamanho: 42, clara: true),
+                        const Spacer(),
+                        IconButton(
+                          tooltip: "Alertas",
+                          onPressed: () => irParaAba(2),
+                          icon: Badge(
+                            isLabelVisible: criticos > 0,
+                            smallSize: 10,
+                            backgroundColor: corCritico,
+                            child: const Icon(Icons.notifications_none_rounded,
+                                color: Colors.white, size: 28),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 18),
+                    SizedBox(
+                      width: largura * 0.4,
+                      child: textoBoasVindas(),
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
-                FractionallySizedBox(
-                  widthFactor: 0.5,
-                  alignment: Alignment.centerLeft,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(saudacao, style: const TextStyle(color: Color(0xDDFFFFFF), fontSize: 17)),
-                      const SizedBox(height: 2),
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              nomeExibicao,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 26,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              color: verdeApoio,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: const Icon(Icons.check_rounded, color: Colors.white, size: 18),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      const Text(
-                        "Acompanhe as atividades da sua área.",
-                        style: TextStyle(color: Color(0xDDFFFFFF), fontSize: 13),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        "${agente.microarea} · ${agente.ubs}",
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget textoBoasVindas() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "$saudacao ${agente.isGestor ? "gestor" : "agente"}",
+          style: const TextStyle(color: Color(0xDDFFFFFF), fontSize: 15),
+        ),
+        const SizedBox(height: 2),
+        Row(
+          children: [
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  agente.primeiroNome,
+                  maxLines: 1,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 30,
+                    fontWeight: FontWeight.w700,
+                    height: 1.15,
                   ),
                 ),
-              ],
+              ),
             ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                color: verdeApoio,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: const Icon(Icons.check_rounded, color: Colors.white, size: 16),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          "Acompanhe as visitas de hoje.",
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(color: Color(0xDDFFFFFF), fontSize: 13, height: 1.35),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: const Color(0x26FFFFFF),
+            borderRadius: BorderRadius.circular(20),
           ),
-        ],
-      ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.place_outlined, size: 14, color: Colors.white),
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(
+                  "Microárea ${agente.microarea}",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

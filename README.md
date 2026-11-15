@@ -56,7 +56,7 @@ Login ──► Dashboard (rota do dia) ──► Prontuário de telemetria ─�
 - **Outros estados:** mostrar/ocultar senha, chips de condições, switches e indicadores de carregamento.
 
 ### Widgets utilizados
-`Scaffold`, `AppBar`, `NavigationBar`, `Column`, `Row`, `Stack`, `Container`, `Padding`, `SizedBox`, `Card`, `Image` (logo oficial e ilustração da equipe em `assets/images`), `ShaderMask` (esmaecer as bordas da ilustração), `Icon`, `Badge`, `ListView`, `GridView`, `Form`, `TextFormField`, `DropdownButtonFormField`, `ChoiceChip`, `FilterChip`, `Switch`, `Checkbox`, `LinearProgressIndicator`, `SnackBar` e `AlertDialog`.
+`Scaffold`, `AppBar`, `NavigationBar`, `Column`, `Row`, `Stack`, `Container`, `Padding`, `SizedBox`, `Card`, `Image` (logo oficial e ilustração da equipe em `assets/images`), `LayoutBuilder` (cabeçalho proporcional à largura da tela), `FittedBox`, `Icon`, `Badge`, `ListView`, `GridView`, `Form`, `TextFormField`, `DropdownButtonFormField`, `ChoiceChip`, `FilterChip`, `Switch`, `Checkbox`, `LinearProgressIndicator`, `SnackBar` e `AlertDialog`.
 
 ### Identidade visual
 O tema fica em `lib/utils/cores_sus.dart` (`temaAmparo()`) e segue a direção visual do SUS: simplicidade, confiança e inclusão digital.
