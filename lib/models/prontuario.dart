@@ -3,7 +3,6 @@ import 'package:amparo_sus_app/models/leitura.dart';
 import 'package:amparo_sus_app/models/paciente.dart';
 import 'package:amparo_sus_app/models/visita.dart';
 
-// Espelha o ProntuarioDTO da API (GET /api/v1/pacientes/{id}/prontuario)
 class Prontuario {
   Prontuario({
     required this.paciente,
@@ -30,7 +29,6 @@ class Prontuario {
   List<Leitura> ultimasLeituras;
   Visita? alertaPendente;
 
-  // Última leitura de um tipo de sensor (para os cards do GridView)
   Leitura? ultimaDoSensor(String tipo) {
     for (final l in ultimasLeituras) {
       if (l.tipoSensor == tipo) return l;

@@ -28,7 +28,6 @@ class Kit {
   int? rssiDbm;
   DateTime? dataUltimoSinal;
 
-  // Qualidade do sinal LoRa a partir do RSSI
   String get qualidadeSinal {
     if (rssiDbm == null) return "sem leitura";
     if (rssiDbm! >= -85) return "bom";

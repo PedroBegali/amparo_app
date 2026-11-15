@@ -33,7 +33,7 @@ class Paciente {
   DateTime dataNascimento;
   String endereco;
   String microarea;
-  String condicoes; // ex.: "HAS,ICC"
+  String condicoes;
   bool moraSozinho;
   String nivelRisco;
   int scoreRisco;
@@ -48,7 +48,6 @@ class Paciente {
     return anos;
   }
 
-  // Formato aceito pela API (LocalDate yyyy-MM-dd)
   String get dataNascimentoIso =>
       "${dataNascimento.year.toString().padLeft(4, "0")}-"
       "${dataNascimento.month.toString().padLeft(2, "0")}-"

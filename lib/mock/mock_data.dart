@@ -4,8 +4,6 @@ import 'package:amparo_sus_app/models/leitura.dart';
 import 'package:amparo_sus_app/models/paciente.dart';
 import 'package:amparo_sus_app/models/visita.dart';
 
-// Dados locais usados quando a API está fora do ar (modo demonstração).
-// É a MESMA massa do script 02_dml_carga.sql e do DataLoader da API Java.
 class MockData {
   MockData._();
 
@@ -44,22 +42,14 @@ class MockData {
   ];
 
   static final List<Leitura> leituras = [
-    // José (CRÍTICO): SOS há 40 min
     _remedio(1, 180, 78, 96), _colchao(1, 480, 70, 3), _pir(1, 60, 30),
     Leitura(kitId: 1, tipoSensor: "SOS", dataLeitura: _min(40), sos: true),
-    // Maria (ALTO): caixa aberta há 30h
     _remedio(2, 1800, 80, 95), _colchao(2, 540, 68, 2), _pir(2, 120, 45),
-    // Antônio (MODERADO): agitação 8
     _remedio(3, 240, 82, 94), _colchao(3, 420, 74, 8), _pir(3, 60, 20),
-    // Benedita (CRÍTICO): SpO2 88
     _remedio(4, 120, 92, 88), _colchao(4, 480, 85, 4), _pir(4, 60, 15),
-    // Francisco (ESTÁVEL)
     _remedio(5, 300, 72, 97), _colchao(5, 480, 64, 1), _pir(5, 60, 25),
-    // Joana (ALTO): 300 min imóvel
     _remedio(6, 360, 76, 96), _colchao(6, 540, 66, 2), _pir(6, 60, 300),
-    // Sebastião (ALTO): 108 bpm
     _remedio(7, 180, 108, 93), _colchao(7, 480, 98, 5),
-    // Rosa (ESTÁVEL)
     _remedio(8, 240, 70, 97), _pir(8, 120, 10),
   ];
 
@@ -72,7 +62,6 @@ class MockData {
     _v(6, pacientes[6], "ALTO", 75, "Frequência cardíaca elevada (100-120 bpm)", 180),
   ];
 
-  // ---------------- helpers ----------------
 
   static Paciente _p(int id, int agenteId, String nome, String cns, DateTime nascimento,
       String endereco, String microarea, String condicoes, bool sozinho, String nivel, int score) {

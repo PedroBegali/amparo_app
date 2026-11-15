@@ -4,7 +4,6 @@ import 'package:amparo_sus_app/repositories/auth_repository.dart';
 import 'package:amparo_sus_app/services/api_client.dart';
 
 class VisitaRepository {
-  // GET /api/v1/visitas/rota?agenteId= (já vem ordenada por score)
   Future<List<Visita>> getRota(int agenteId) async {
     if (!ModoApp.offline) {
       try {
@@ -26,7 +25,6 @@ class VisitaRepository {
     return rota;
   }
 
-  // POST /api/v1/visitas/rota/recalcular -> motor de risco (Java ou PL/SQL)
   Future<void> recalcular(int agenteId) async {
     if (ModoApp.offline) return;
     try {
@@ -36,7 +34,6 @@ class VisitaRepository {
     }
   }
 
-  // PATCH /api/v1/visitas/{id}/concluir
   Future<void> concluir(int visitaId, String desfecho, String observacao,
       bool sensoresChecados, String? statusKit) async {
     final corpo = {

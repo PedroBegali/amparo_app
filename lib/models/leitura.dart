@@ -28,7 +28,7 @@ class Leitura {
 
   int? id;
   int kitId;
-  String tipoSensor; // PIR, PORTA_REMEDIO, COLCHAO, SOS
+  String tipoSensor;
   DateTime dataLeitura;
   int? bpm;
   int? spo2;
@@ -38,7 +38,6 @@ class Leitura {
   int? agitacaoNoturna;
   bool? sinaisLeito;
 
-  // Texto curto exibido no histórico do prontuário
   String get resumo {
     switch (tipoSensor) {
       case "PIR":
