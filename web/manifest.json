@@ -1,11 +1,11 @@
 {
-    "name": "amparo_sus_app",
-    "short_name": "amparo_sus_app",
+    "name": "AMPARO SUS",
+    "short_name": "AMPARO SUS",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#005EB8",
+    "theme_color": "#005EB8",
+    "description": "AMPARO SUS - app do Agente Comunitário de Saúde",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

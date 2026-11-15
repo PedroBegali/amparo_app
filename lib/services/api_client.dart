@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 const tokenKey = "amparo_token";
 
-// Erro devolvido pela API no formato ErroResponse (400, 401, 403, 404, 422...)
 class ApiException implements Exception {
   ApiException(this.status, this.mensagem, [this.campos]);
 
@@ -15,7 +15,6 @@ class ApiException implements Exception {
   final String mensagem;
   final Map<String, dynamic>? campos;
 
-  // Mensagem amigável para SnackBar (inclui o primeiro campo inválido)
   String get detalhe {
     if (campos != null && campos!.isNotEmpty) {
       return "$mensagem ${campos!.values.first}";
@@ -27,17 +26,19 @@ class ApiException implements Exception {
   String toString() => detalhe;
 }
 
-// API inacessível (sem rede, servidor desligado, timeout)
 class OfflineException implements Exception {}
 
 class ApiClient {
   ApiClient._();
 
-  // Emulador Android enxerga o localhost do computador como 10.0.2.2.
-  // Para celular físico: flutter run --dart-define=API_URL=http://IP_DO_PC:8080
-  static const String baseUrl =
-      String.fromEnvironment("API_URL", defaultValue: "http://10.0.2.2:8080");
+  static const String _urlDefinida = String.fromEnvironment("API_URL");
   static const Duration timeout = Duration(seconds: 6);
+
+  static String get baseUrl {
+    if (_urlDefinida.isNotEmpty) return _urlDefinida;
+    if (!kIsWeb && Platform.isAndroid) return "http://10.0.2.2:8080";
+    return "http://localhost:8080";
+  }
 
   static String? _token;
 
@@ -104,7 +105,6 @@ class ApiClient {
       return texto.isEmpty ? null : json.decode(texto);
     }
 
-    // Converte o ErroResponse da API em exceção
     try {
       final erro = json.decode(texto) as Map<String, dynamic>;
       throw ApiException(resposta.statusCode, erro["mensagem"] ?? "Erro ${resposta.statusCode}",
