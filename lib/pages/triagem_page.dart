@@ -8,7 +8,6 @@ import 'package:amparo_sus_app/utils/cores_sus.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-// TELA 4 - Formulário de avaliação/triagem domiciliar para inclusão no AMPARO
 class TriagemPage extends StatefulWidget {
   const TriagemPage({super.key});
 
@@ -36,18 +35,11 @@ class _TriagemPageState extends State<TriagemPage> {
   bool enviando = false;
   bool iniciado = false;
 
-  static const Map<String, String> opcoesCondicoes = {
-    "HAS": "Hipertensão",
-    "DM": "Diabetes",
-    "ICC": "Insuf. cardíaca",
-  };
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!iniciado) {
       agente = ModalRoute.of(context)!.settings.arguments as Agente;
-      // gestor (MA-00) informa a microárea; o agente já vem com a sua
       microareaController.text = agente.isGestor ? "" : agente.microarea;
       iniciado = true;
     }
@@ -81,9 +73,8 @@ class _TriagemPageState extends State<TriagemPage> {
     }
   }
 
-  // Ordem fixa HAS,DM,ICC (formato validado pela API)
   String get condicoesFormatadas =>
-      opcoesCondicoes.keys.where((c) => condicoes.contains(c)).join(",");
+      nomesCondicoes.keys.where((c) => condicoes.contains(c)).join(",");
 
   Future<void> salvar() async {
     final formularioValido = _formKey.currentState!.validate();
@@ -119,13 +110,18 @@ class _TriagemPageState extends State<TriagemPage> {
       await showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          icon: const Icon(Icons.verified_user, color: verdeSus, size: 48),
-          title: const Text("Idoso incluído no AMPARO"),
-          content: Text("${paciente.nome} (${paciente.idade} anos)\n"
-              "Kit ${kit.serieLora} vinculado e pronto para instalação.\n"
-              "Nível inicial: ${rotuloDoNivel(paciente.nivelRisco)} (score ${paciente.scoreRisco})."),
+          icon: const Icon(Icons.verified_user_rounded, color: verdeApoio, size: 56),
+          title: const Text("Idoso incluído no AMPARO",
+              style: TextStyle(fontWeight: FontWeight.w700, color: azulEscuro)),
+          content: Text(
+            "${paciente.nome} (${paciente.idade} anos)\n"
+            "Kit ${kit.serieLora} vinculado e pronto para instalação.\n"
+            "Nível inicial: ${rotuloDoNivel(paciente.nivelRisco)} (score ${paciente.scoreRisco}).",
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: cinzaTexto, height: 1.5),
+          ),
           actions: [
-            TextButton(
+            ElevatedButton(
               onPressed: () => Navigator.of(context).pop(),
               child: const Text("OK"),
             ),
@@ -157,23 +153,34 @@ class _TriagemPageState extends State<TriagemPage> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            const Card(
-              color: Color(0xFFE8F0FC),
-              child: ListTile(
-                leading: Icon(Icons.assignment_ind, color: azulSus),
-                title: Text("Critérios de inclusão"),
-                subtitle: Text("Idoso (60+) com doença crônica e baixa rede de apoio. "
-                    "O kit sai da UBS pré-vinculado ao cadastro."),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: azulClaro,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.info_outline_rounded, color: azulPrincipal),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      "Idoso (60+) com doença crônica e baixa rede de apoio. "
+                      "O kit sai da UBS pré-vinculado ao cadastro.",
+                      style: TextStyle(fontSize: 13, color: azulEscuro, height: 1.4),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
+            tituloSecao("Dados do idoso"),
             TextFormField(
               controller: nomeController,
               textCapitalization: TextCapitalization.words,
               decoration: const InputDecoration(
                 labelText: "Nome completo",
-                prefixIcon: Icon(Icons.person_outline),
-                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.person_outline_rounded),
               ),
               validator: (valor) {
                 final texto = valor?.trim() ?? "";
@@ -182,15 +189,14 @@ class _TriagemPageState extends State<TriagemPage> {
                 return null;
               },
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             TextFormField(
               controller: cnsController,
               keyboardType: TextInputType.number,
               maxLength: 15,
               decoration: const InputDecoration(
                 labelText: "Cartão Nacional de Saúde (CNS)",
-                prefixIcon: Icon(Icons.credit_card),
-                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.credit_card_rounded),
               ),
               validator: (valor) {
                 if (valor == null || !RegExp(r"^\d{15}$").hasMatch(valor.trim())) {
@@ -199,7 +205,7 @@ class _TriagemPageState extends State<TriagemPage> {
                 return null;
               },
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             TextFormField(
               controller: nascimentoController,
               readOnly: true,
@@ -207,7 +213,7 @@ class _TriagemPageState extends State<TriagemPage> {
               decoration: const InputDecoration(
                 labelText: "Data de nascimento",
                 prefixIcon: Icon(Icons.cake_outlined),
-                border: OutlineInputBorder(),
+                suffixIcon: Icon(Icons.calendar_month_outlined, color: cinzaSuave),
               ),
               validator: (_) {
                 if (dataNascimento == null) return "Selecione a data de nascimento.";
@@ -216,18 +222,17 @@ class _TriagemPageState extends State<TriagemPage> {
                 return null;
               },
             ),
-            const SizedBox(height: 12),
+            tituloSecao("Endereço e kit"),
             TextFormField(
               controller: enderecoController,
               decoration: const InputDecoration(
                 labelText: "Endereço",
                 prefixIcon: Icon(Icons.place_outlined),
-                border: OutlineInputBorder(),
               ),
               validator: (valor) =>
                   (valor == null || valor.trim().length < 8) ? "Informe o endereço completo." : null,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -238,11 +243,11 @@ class _TriagemPageState extends State<TriagemPage> {
                     decoration: const InputDecoration(
                       labelText: "Microárea",
                       hintText: "MA-01",
-                      border: OutlineInputBorder(),
                     ),
-                    validator: (valor) => RegExp(r"^MA-\d{2}$").hasMatch((valor ?? "").trim().toUpperCase())
-                        ? null
-                        : "Formato MA-01",
+                    validator: (valor) =>
+                        RegExp(r"^MA-\d{2}$").hasMatch((valor ?? "").trim().toUpperCase())
+                            ? null
+                            : "Formato MA-01",
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -254,7 +259,6 @@ class _TriagemPageState extends State<TriagemPage> {
                     decoration: const InputDecoration(
                       labelText: "Série do Kit LoRa",
                       prefixIcon: Icon(Icons.router_outlined),
-                      border: OutlineInputBorder(),
                     ),
                     validator: (valor) =>
                         RegExp(r"^KIT-LORA-\d{4}$").hasMatch((valor ?? "").trim().toUpperCase())
@@ -264,16 +268,19 @@ class _TriagemPageState extends State<TriagemPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            const Text("Condições crônicas", style: TextStyle(fontWeight: FontWeight.w600)),
-            const SizedBox(height: 4),
+            tituloSecao("Condições crônicas"),
             Wrap(
               spacing: 8,
+              runSpacing: 8,
               children: [
-                for (final entrada in opcoesCondicoes.entries)
+                for (final entrada in nomesCondicoes.entries)
                   FilterChip(
                     label: Text(entrada.value),
                     selected: condicoes.contains(entrada.key),
+                    checkmarkColor: azulPrincipal,
+                    side: BorderSide(
+                      color: condicoes.contains(entrada.key) ? azulPrincipal : bordaSuave,
+                    ),
                     onSelected: (marcado) {
                       setState(() {
                         if (marcado) {
@@ -289,35 +296,52 @@ class _TriagemPageState extends State<TriagemPage> {
             ),
             if (erroCondicoes)
               const Padding(
-                padding: EdgeInsets.only(top: 4, left: 12),
+                padding: EdgeInsets.only(top: 6, left: 12),
                 child: Text("Selecione ao menos uma condição.",
                     style: TextStyle(color: corCritico, fontSize: 12)),
               ),
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: const Text("Mora sozinho(a) ou passa o dia sem apoio"),
-              subtitle: const Text("Aumenta a prioridade nas visitas (+5 no score)"),
-              value: moraSozinho,
-              onChanged: (valor) {
-                setState(() {
-                  moraSozinho = valor;
-                });
-              },
-            ),
             const SizedBox(height: 12),
-            SizedBox(
-              height: 48,
-              child: ElevatedButton.icon(
-                onPressed: enviando ? null : salvar,
-                icon: enviando
-                    ? const SizedBox(
-                        width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Icon(Icons.how_to_reg),
-                label: const Text("Incluir no AMPARO e vincular kit"),
+            Card(
+              child: SwitchListTile(
+                activeThumbColor: verdeApoio,
+                title: const Text("Mora sozinho(a) ou passa o dia sem apoio",
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: azulEscuro)),
+                subtitle: const Text("Aumenta a prioridade nas visitas (+5 no score)",
+                    style: TextStyle(fontSize: 12, color: cinzaSuave)),
+                value: moraSozinho,
+                onChanged: (valor) {
+                  setState(() {
+                    moraSozinho = valor;
+                  });
+                },
               ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: enviando ? null : salvar,
+              icon: enviando
+                  ? const SizedBox(
+                      width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(Icons.add_rounded),
+              label: const Text("Incluir no AMPARO e vincular kit"),
+            ),
+            const SizedBox(height: 10),
+            OutlinedButton(
+              onPressed: enviando ? null : () => Navigator.pop(context),
+              child: const Text("Cancelar"),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget tituloSecao(String texto) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(2, 20, 0, 12),
+      child: Text(
+        texto,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: azulEscuro),
       ),
     );
   }

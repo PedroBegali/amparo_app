@@ -45,6 +45,8 @@ class _DesfechoVisitaPageState extends State<DesfechoVisitaPage> {
     super.dispose();
   }
 
+  bool get observacaoObrigatoria => desfecho == "ENCAMINHADO_UBS" || desfecho == "ACIONADO_SAMU";
+
   Future<void> salvar() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -64,12 +66,16 @@ class _DesfechoVisitaPageState extends State<DesfechoVisitaPage> {
         context: context,
         barrierDismissible: false,
         builder: (context) => AlertDialog(
-          icon: const Icon(Icons.check_circle, color: verdeSus, size: 48),
-          title: const Text("Visita concluída"),
+          icon: const Icon(Icons.check_circle_rounded, color: verdeApoio, size: 56),
+          title: const Text("Visita concluída",
+              style: TextStyle(fontWeight: FontWeight.w700, color: azulEscuro)),
           content: Text(
-              "${visita.pacienteNome}\nDesfecho: ${desfechos[desfecho]}\nKit: ${statusKit[statusDoKit]}"),
+            "${visita.pacienteNome}\nDesfecho: ${desfechos[desfecho]}\nKit: ${statusKit[statusDoKit]}",
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: cinzaTexto, height: 1.5),
+          ),
           actions: [
-            TextButton(
+            ElevatedButton(
               onPressed: () => Navigator.of(context).pop(),
               child: const Text("Voltar para a rota"),
             ),
@@ -102,20 +108,43 @@ class _DesfechoVisitaPageState extends State<DesfechoVisitaPage> {
           padding: const EdgeInsets.all(16),
           children: [
             Card(
-              child: ListTile(
-                leading: const Icon(Icons.elderly, color: azulSus, size: 32),
-                title: Text(visita.pacienteNome),
-                subtitle: Text(visita.motivo),
-                trailing: NivelRiscoChip(nivel: visita.nivelRisco),
+              child: Padding(
+                padding: const EdgeInsets.all(14),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 24,
+                      backgroundColor: fundoDoNivel(visita.nivelRisco),
+                      child: Icon(Icons.elderly_rounded, color: corDoNivel(visita.nivelRisco)),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            visita.pacienteNome,
+                            style: const TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w600, color: azulEscuro),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(visita.motivo, style: const TextStyle(fontSize: 13, color: cinzaTexto)),
+                          const SizedBox(height: 6),
+                          NivelRiscoChip(nivel: visita.nivelRisco, score: visita.score),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: 16),
+            tituloSecao("Registro da visita"),
             DropdownButtonFormField<String>(
+              borderRadius: BorderRadius.circular(12),
               initialValue: desfecho,
               decoration: const InputDecoration(
                 labelText: "Desfecho",
                 prefixIcon: Icon(Icons.fact_check_outlined),
-                border: OutlineInputBorder(),
               ),
               items: [
                 for (final entrada in desfechos.entries)
@@ -128,72 +157,78 @@ class _DesfechoVisitaPageState extends State<DesfechoVisitaPage> {
               },
               validator: (valor) => valor == null ? "Selecione o desfecho da visita." : null,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             TextFormField(
               controller: observacaoController,
               maxLines: 3,
               maxLength: 300,
               decoration: InputDecoration(
                 labelText: "Observações",
-                hintText: "O que foi observado/orientado na visita",
-                border: const OutlineInputBorder(),
-                helperText: desfecho == "ENCAMINHADO_UBS" || desfecho == "ACIONADO_SAMU"
-                    ? "Obrigatório para encaminhamentos"
-                    : null,
+                hintText: "O que foi observado ou orientado na visita",
+                alignLabelWithHint: true,
+                helperText: observacaoObrigatoria ? "Obrigatório para encaminhamentos" : null,
               ),
               validator: (valor) {
                 final texto = valor?.trim() ?? "";
-                final obrigatorio = desfecho == "ENCAMINHADO_UBS" || desfecho == "ACIONADO_SAMU";
-                if (obrigatorio && texto.length < 10) {
+                if (observacaoObrigatoria && texto.length < 10) {
                   return "Descreva o encaminhamento (mín. 10 caracteres).";
                 }
                 return null;
               },
             ),
-            const SizedBox(height: 8),
-            const Text("Status dos kits LoRa",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            for (final kit in kits)
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+            if (kits.isNotEmpty) ...[
+              tituloSecao("Status dos kits LoRa"),
+              for (final kit in kits)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(14),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(Icons.router_outlined, color: azulSus),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(kit.serieLora,
-                                style: const TextStyle(fontWeight: FontWeight.w600)),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                    color: azulClaro, borderRadius: BorderRadius.circular(10)),
+                                child: const Icon(Icons.router_outlined, color: azulPrincipal),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(kit.serieLora,
+                                    style: const TextStyle(fontWeight: FontWeight.w600, color: azulEscuro)),
+                              ),
+                              Text("Sinal ${kit.qualidadeSinal}",
+                                  style: const TextStyle(fontSize: 12, color: cinzaSuave)),
+                            ],
                           ),
-                          Text("sinal ${kit.qualidadeSinal}",
-                              style: const TextStyle(fontSize: 12, color: Colors.black54)),
+                          const SizedBox(height: 12),
+                          Text("Bateria ${kit.bateriaPct}%",
+                              style: const TextStyle(fontSize: 12, color: cinzaTexto)),
+                          const SizedBox(height: 6),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: LinearProgressIndicator(
+                              value: kit.bateriaPct / 100,
+                              minHeight: 8,
+                              color: kit.bateriaPct < 30 ? corCritico : verdeApoio,
+                              backgroundColor: azulClaro,
+                            ),
+                          ),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      Text("Bateria ${kit.bateriaPct}%", style: const TextStyle(fontSize: 12)),
-                      const SizedBox(height: 4),
-                      LinearProgressIndicator(
-                        value: kit.bateriaPct / 100,
-                        minHeight: 8,
-                        color: kit.bateriaPct < 30 ? corCritico : verdeSus,
-                        backgroundColor: Colors.black12,
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            if (kits.isNotEmpty) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: 4),
               DropdownButtonFormField<String>(
+                borderRadius: BorderRadius.circular(12),
                 initialValue: statusDoKit,
                 decoration: const InputDecoration(
                   labelText: "Status do kit após a visita",
-                  prefixIcon: Icon(Icons.settings_input_antenna),
-                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.settings_input_antenna_rounded),
                 ),
                 items: [
                   for (final entrada in statusKit.entries)
@@ -206,9 +241,12 @@ class _DesfechoVisitaPageState extends State<DesfechoVisitaPage> {
                 },
               ),
             ],
+            const SizedBox(height: 8),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text("Sensores checados nesta visita"),
+              activeThumbColor: verdeApoio,
+              title: const Text("Sensores checados nesta visita",
+                  style: TextStyle(fontSize: 14, color: cinzaTexto)),
               value: sensoresChecados,
               onChanged: (valor) {
                 setState(() {
@@ -216,20 +254,28 @@ class _DesfechoVisitaPageState extends State<DesfechoVisitaPage> {
                 });
               },
             ),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 48,
-              child: ElevatedButton.icon(
-                onPressed: enviando ? null : salvar,
-                icon: enviando
-                    ? const SizedBox(
-                        width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Icon(Icons.save),
-                label: const Text("Concluir visita"),
-              ),
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(backgroundColor: verdeApoio),
+              onPressed: enviando ? null : salvar,
+              icon: enviando
+                  ? const SizedBox(
+                      width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(Icons.check_rounded),
+              label: const Text("Concluir visita"),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget tituloSecao(String texto) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(2, 20, 0, 12),
+      child: Text(
+        texto,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: azulEscuro),
       ),
     );
   }
