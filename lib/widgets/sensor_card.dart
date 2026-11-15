@@ -1,6 +1,6 @@
+import 'package:amparo_sus_app/utils/cores_sus.dart';
 import 'package:flutter/material.dart';
 
-// Card de um sensor do Kit AMPARO no prontuário (GridView 2x2)
 class SensorCard extends StatelessWidget {
   const SensorCard({
     super.key,
@@ -19,32 +19,47 @@ class SensorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cor = alerta ? Colors.red.shade700 : Theme.of(context).colorScheme.primary;
-    return Card(
-      color: alerta ? Colors.red.shade50 : null,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icone, color: cor),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(titulo,
-                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+    final cor = alerta ? corCritico : azulPrincipal;
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: alerta ? fundoDoNivel("CRITICO") : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: alerta ? corCritico.withValues(alpha: 0.4) : bordaSuave),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: alerta ? Colors.white : azulClaro,
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                if (alerta) Icon(Icons.priority_high, color: cor, size: 18),
-              ],
-            ),
-            const Spacer(),
-            Text(valor,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: cor)),
-            const SizedBox(height: 2),
-            Text(detalhe, style: const TextStyle(fontSize: 11, color: Colors.black54)),
-          ],
-        ),
+                child: Icon(icone, color: cor, size: 20),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  titulo,
+                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: azulEscuro),
+                ),
+              ),
+              if (alerta) const Icon(Icons.warning_rounded, color: corCritico, size: 18),
+            ],
+          ),
+          const Spacer(),
+          Text(valor, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: cor)),
+          const SizedBox(height: 2),
+          Text(
+            detalhe,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 11, color: cinzaSuave),
+          ),
+        ],
       ),
     );
   }
