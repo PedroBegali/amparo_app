@@ -4,7 +4,18 @@ import 'package:amparo_sus_app/repositories/auth_repository.dart';
 import 'package:amparo_sus_app/services/api_client.dart';
 
 class KitRepository {
-  // POST /api/v1/kits (vincula o Kit AMPARO ao idoso na triagem)
+  Future<List<Kit>> listar() async {
+    if (!ModoApp.offline) {
+      try {
+        final List resposta = await ApiClient.get("/api/v1/kits") as List;
+        return resposta.map((e) => Kit.fromJson(e)).toList();
+      } on OfflineException {
+        ModoApp.offline = true;
+      }
+    }
+    return List.of(MockData.kits);
+  }
+
   Future<Kit> vincular(Kit kit) async {
     if (!ModoApp.offline) {
       try {

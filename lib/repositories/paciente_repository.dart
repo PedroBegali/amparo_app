@@ -1,11 +1,27 @@
 import 'package:amparo_sus_app/mock/mock_data.dart';
+import 'package:amparo_sus_app/models/agente.dart';
 import 'package:amparo_sus_app/models/paciente.dart';
 import 'package:amparo_sus_app/models/prontuario.dart';
 import 'package:amparo_sus_app/repositories/auth_repository.dart';
 import 'package:amparo_sus_app/services/api_client.dart';
 
 class PacienteRepository {
-  // GET /api/v1/pacientes/{id}/prontuario
+  Future<List<Paciente>> listar(Agente agente) async {
+    if (!ModoApp.offline) {
+      try {
+        final filtroAgente = agente.isGestor ? "" : "&agenteId=${agente.id}";
+        final resposta = await ApiClient.get("/api/v1/pacientes/filtro?size=200$filtroAgente");
+        final List conteudo = resposta["content"] as List;
+        return conteudo.map((e) => Paciente.fromJson(e)).toList();
+      } on OfflineException {
+        ModoApp.offline = true;
+      }
+    }
+    return MockData.pacientes
+        .where((p) => agente.isGestor || p.agenteId == agente.id)
+        .toList();
+  }
+
   Future<Prontuario> getProntuario(int pacienteId) async {
     if (!ModoApp.offline) {
       try {
@@ -31,7 +47,6 @@ class PacienteRepository {
     );
   }
 
-  // POST /api/v1/pacientes (triagem domiciliar)
   Future<Paciente> cadastrar(Paciente paciente) async {
     if (!ModoApp.offline) {
       try {
