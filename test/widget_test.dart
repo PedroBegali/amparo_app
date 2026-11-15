@@ -1,5 +1,6 @@
 import 'package:amparo_sus_app/main.dart';
 import 'package:amparo_sus_app/models/visita.dart';
+import 'package:amparo_sus_app/utils/cores_sus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -7,7 +8,8 @@ void main() {
   testWidgets("Login valida campos vazios", (WidgetTester tester) async {
     await tester.pumpWidget(const AmparoApp());
 
-    expect(find.text("AMPARO-SUS"), findsOneWidget);
+    expect(find.text("Identificação do agente"), findsOneWidget);
+    await tester.ensureVisible(find.text("Entrar"));
     await tester.tap(find.text("Entrar"));
     await tester.pump();
 
@@ -18,6 +20,7 @@ void main() {
   testWidgets("Usuário de teste preenche o formulário", (WidgetTester tester) async {
     await tester.pumpWidget(const AmparoApp());
 
+    await tester.ensureVisible(find.text("Agente"));
     await tester.tap(find.text("Agente"));
     await tester.pump();
 
@@ -42,5 +45,10 @@ void main() {
     });
     expect(visita.score, 110);
     expect(visita.dataGeracao.hour, 15);
+  });
+
+  test("Condições aparecem por extenso", () {
+    expect(condicoesPorExtenso("HAS,ICC"), "Hipertensão, Insuf. cardíaca");
+    expect(rotuloDoNivel("CRITICO"), "Crítico");
   });
 }
