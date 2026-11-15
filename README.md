@@ -41,8 +41,10 @@ Login ──► Dashboard (rota do dia) ──► Prontuário de telemetria ─�
 | # | Rota | Tela | Destaques |
 |---|---|---|---|
 | 1 | `/` | **Login / identificação** | `Form` + `GlobalKey<FormState>`, validação de e-mail e senha, botão de mostrar senha, atalhos para os usuários de teste e `SnackBar` de erro |
-| 2 | `/dashboard` | **Rota prioritária do dia** | Recebe o `Agente`. Card "Pendentes no turno: N / Concluídas: M", **GridView** com a contagem por nível, **ChoiceChips** que filtram por gravidade (`setState`), `ListView` da rota, recálculo do motor de risco e FAB "Nova triagem" |
-| 3 | `/prontuario` | **Prontuário de telemetria** | Recebe a `Visita`. Dados do idoso, **GridView 2×2** dos sensores (PIR, porta-remédios, colchão e SOS) com destaque de alerta, kit LoRa, últimas leituras e **Checkbox** "sensores checados" que libera o botão (`setState`) |
+| 2 | `/dashboard` | **Painel do agente** | Recebe o `Agente`. Barra inferior (`NavigationBar`) com 4 abas trocadas por `setState`. **Início:** saudação, cards de resumo (alertas críticos, visitas do dia, pacientes monitorados), **GridView** de atalhos e os alertas mais graves. **Visitas:** "Pendentes no turno: N / Concluídas: M" com barra de progresso, **ChoiceChips** que filtram por gravidade e a rota ordenada por score. **Alertas:** **GridView** com a contagem por nível e a lista de prioridade imediata. **Perfil:** dados do agente, status da API e sair |
+| + | `/pacientes` | Pacientes monitorados | Recebe o `Agente`. Busca por nome em tempo real (`setState`) e lista vinda de `GET /api/v1/pacientes/filtro` (Specification). Toque abre o prontuário |
+| + | `/kits` | Kits LoRa | Recebe o `Agente`. Resumo de kits, filtro por status (`ChoiceChip`), bateria com `LinearProgressIndicator` e qualidade do sinal |
+| 3 | `/prontuario` | **Prontuário de telemetria** | Recebe a `Visita` (ou o `Paciente`, vindo da lista). Dados do idoso, **GridView 2×2** dos sensores (PIR, porta-remédios, colchão e SOS) com destaque de alerta, kit LoRa, últimas leituras e **Checkbox** "sensores checados" que libera o botão (`setState`) |
 | 4 | `/triagem` | **Formulário de triagem domiciliar** | Recebe o `Agente`. `Form` com nome, CNS (15 dígitos), data de nascimento (`DatePicker`, 60+ anos), endereço, microárea, série do kit (`KIT-LORA-0000`), condições (`FilterChip`) e mora sozinho (`Switch`). Cadastra o idoso, vincula o kit e mostra `AlertDialog` de confirmação |
 | 5 | `/desfecho` | **Registro de desfecho e status do kit** | Recebe `{visita, kits, sensoresChecados}`. `DropdownButtonFormField` de desfecho, observação obrigatória para encaminhamentos, bateria com `LinearProgressIndicator`, status do kit e `AlertDialog`. Volta com `pop(true)` |
 | + | `/sobre` | Sobre | Regra de risco, ODS (`GridView`) e declaração de IA |
@@ -54,9 +56,23 @@ Login ──► Dashboard (rota do dia) ──► Prontuário de telemetria ─�
 - **Outros estados:** mostrar/ocultar senha, chips de condições, switches e indicadores de carregamento.
 
 ### Widgets utilizados
-`Scaffold`, `AppBar`, `Column`, `Row`, `Container`, `Padding`, `SizedBox`, `Card`, `Image` (logo em `assets/images`), `Icon`, `ListView`, `GridView`, `Form`, `TextFormField`, `DropdownButtonFormField`, `ChoiceChip`, `FilterChip`, `Switch`, `Checkbox`, `SnackBar` e `AlertDialog`.
+`Scaffold`, `AppBar`, `NavigationBar`, `Column`, `Row`, `Stack`, `Container`, `Padding`, `SizedBox`, `Card`, `Image` (logo oficial e ilustração da equipe em `assets/images`), `ShaderMask` (esmaecer as bordas da ilustração), `Icon`, `Badge`, `ListView`, `GridView`, `Form`, `TextFormField`, `DropdownButtonFormField`, `ChoiceChip`, `FilterChip`, `Switch`, `Checkbox`, `LinearProgressIndicator`, `SnackBar` e `AlertDialog`.
 
-A identidade visual segue o padrão gov.br/SUS: azul `#1351B4` e verde `#168821`. Cada nível de risco tem uma cor e um ícone próprios.
+### Identidade visual
+O tema fica em `lib/utils/cores_sus.dart` (`temaAmparo()`) e segue a direção visual do SUS: simplicidade, confiança e inclusão digital.
+
+| Cor | Hex | Uso |
+|---|---|---|
+| Azul principal | `#005EB8` | Marca, ações principais e cabeçalhos |
+| Azul escuro | `#003B7A` | Títulos e informações importantes |
+| Azul claro | `#EAF4FF` | Fundos e destaques leves |
+| Verde apoio | `#3FAE5A` | Confirmações, progresso e ações positivas |
+| Cinza texto | `#334155` | Textos e informações secundárias |
+
+- **Logo oficial:** `logo_amparo.png` (azul) e `logo_amparo_branca.png` (para cabeçalhos azuis), ambas com fundo transparente.
+- **Ilustração:** `equipe_saude.png` (médica, agente e idosa) aparece no login, no Início e na tela Sobre.
+- **Tipografia:** Inter (pesos 400 a 700), empacotada em `assets/fonts`, então funciona offline.
+- **Níveis de risco:** cada um tem cor, fundo e ícone próprios. A informação nunca depende só da cor.
 
 ## 3. Integração com a API Java
 O app consome a API Spring Boot do repositório `amparo-sus-api`. A autenticação é por JWT, e o token fica salvo em `shared_preferences`.
@@ -65,6 +81,8 @@ O app consome a API Spring Boot do repositório `amparo-sus-api`. A autenticaç�
 |---|---|
 | Login | `POST /auth/login` |
 | Rota do dia | `GET /api/v1/visitas/rota?agenteId=` |
+| Pacientes monitorados | `GET /api/v1/pacientes/filtro?agenteId=` |
+| Kits LoRa | `GET /api/v1/kits` |
 | Recalcular rota | `POST /api/v1/visitas/rota/recalcular?agenteId=` |
 | Prontuário | `GET /api/v1/pacientes/{id}/prontuario` |
 | Triagem | `POST /api/v1/pacientes` + `POST /api/v1/kits` |
@@ -73,13 +91,15 @@ O app consome a API Spring Boot do repositório `amparo-sus-api`. A autenticaç�
 **Modo demonstração:** se a API não responder (sem rede ou servidor desligado), os repositórios usam `lib/mock/mock_data.dart`. São os mesmos dados do banco Oracle e da API, e o app mostra um aviso amarelo no topo.
 
 ## 4. Como executar
-Pré-requisitos: Flutter 3.44+ e um emulador Android ou celular.
+Pré-requisitos: Flutter 3.44+ e um emulador Android, celular, Chrome ou Windows.
 
 ```bash
 flutter pub get
 flutter run
 ```
-- **Emulador Android:** o app acessa a API em `http://10.0.2.2:8080`, que é o `localhost` do computador. Basta subir a API com `./mvnw spring-boot:run`.
+Antes, suba a API com `./mvnw spring-boot:run`. O endereço da API muda conforme a plataforma:
+- **Windows ou Chrome:** o app usa `http://localhost:8080`. Rode com `flutter run -d windows` ou `flutter run -d chrome`.
+- **Emulador Android:** o app usa `http://10.0.2.2:8080`, que é o `localhost` do computador.
 - **Celular físico na mesma rede:**
 ```bash
 flutter run --dart-define=API_URL=http://IP_DO_COMPUTADOR:8080
@@ -109,9 +129,9 @@ lib/
   services/api_client.dart  HTTP + JWT + tratamento do ErroResponse da API
   repositories/             auth, visita, paciente, kit (API com fallback para mock)
   mock/mock_data.dart       dados de demonstração offline
-  pages/                    login, dashboard, prontuario, triagem, desfecho_visita, sobre
-  widgets/                  visita_card, sensor_card, nivel_risco_chip, banner_offline
-  utils/cores_sus.dart      cores, rótulos e ícones dos níveis de risco
+  pages/                    login, dashboard, pacientes, kits, prontuario, triagem, desfecho_visita, sobre
+  widgets/                  logo_amparo, ilustracao_equipe, resumo_card, atalho_card, visita_card, sensor_card, nivel_risco_chip, banner_offline
+  utils/cores_sus.dart      paleta, tema (temaAmparo), rótulos e ícones dos níveis de risco
 ```
 
 ## 6. Declaração de uso de IA generativa
