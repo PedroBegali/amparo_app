@@ -1,6 +1,8 @@
 import 'package:amparo_sus_app/pages/dashboard_page.dart';
 import 'package:amparo_sus_app/pages/desfecho_visita_page.dart';
+import 'package:amparo_sus_app/pages/kits_page.dart';
 import 'package:amparo_sus_app/pages/login_page.dart';
+import 'package:amparo_sus_app/pages/pacientes_page.dart';
 import 'package:amparo_sus_app/pages/prontuario_page.dart';
 import 'package:amparo_sus_app/pages/sobre_page.dart';
 import 'package:amparo_sus_app/pages/triagem_page.dart';
@@ -17,40 +19,29 @@ class AmparoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "AMPARO-SUS",
+      title: "AMPARO SUS",
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: azulSus, primary: azulSus, secondary: verdeSus),
-        scaffoldBackgroundColor: fundoClaro,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: azulSus,
-          foregroundColor: Colors.white,
-          centerTitle: false,
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: verdeSus,
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      theme: temaAmparo(),
+      builder: (context, child) {
+        return ColoredBox(
+          color: const Color(0xFFDCE6F2),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 480),
+              child: child,
+            ),
           ),
-        ),
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: verdeSus,
-          foregroundColor: Colors.white,
-        ),
-        cardTheme: CardThemeData(
-          elevation: 1,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      ),
-      // Rotas nomeadas; os parâmetros seguem em "arguments"
+        );
+      },
       initialRoute: "/",
       routes: {
-        "/": (context) => const LoginPage(), // 1
-        "/dashboard": (context) => const DashboardPage(), // 2 (Agente)
-        "/prontuario": (context) => const ProntuarioPage(), // 3 (Visita)
-        "/triagem": (context) => const TriagemPage(), // 4 (Agente)
-        "/desfecho": (context) => const DesfechoVisitaPage(), // 5 (Visita + kits)
+        "/": (context) => const LoginPage(),
+        "/dashboard": (context) => const DashboardPage(),
+        "/prontuario": (context) => const ProntuarioPage(),
+        "/triagem": (context) => const TriagemPage(),
+        "/desfecho": (context) => const DesfechoVisitaPage(),
+        "/pacientes": (context) => const PacientesPage(),
+        "/kits": (context) => const KitsPage(),
         "/sobre": (context) => const SobrePage(),
       },
     );
