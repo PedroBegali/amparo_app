@@ -3,7 +3,7 @@
     "short_name": "AMPARO SUS",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#005EB8",
+    "background_color": "#FFFFFF",
     "theme_color": "#005EB8",
     "description": "AMPARO SUS - app do Agente Comunitário de Saúde",
     "orientation": "portrait-primary",
