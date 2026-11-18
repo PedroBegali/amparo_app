@@ -105,10 +105,15 @@ Antes, suba a API com `./mvnw spring-boot:run`. O endereço da API muda conforme
 ```bash
 flutter run --dart-define=API_URL=http://IP_DO_COMPUTADOR:8080
 ```
-- **Gerar o APK de release:**
+- **API publicada na internet (Render):**
 ```bash
-flutter build apk --release
+flutter run --dart-define=API_URL=https://SEU-SERVICO.onrender.com
 ```
+- **Gerar o APK de release** apontando para a API publicada:
+```bash
+flutter build apk --release --dart-define=API_URL=https://SEU-SERVICO.onrender.com
+```
+  No plano gratuito o Render desliga o serviço sem uso; a primeira chamada pode levar até 1 minuto. Abra `https://SEU-SERVICO.onrender.com/swagger-ui.html` no navegador antes de usar o app.
   O arquivo sai em `build/app/outputs/flutter-apk/app-release.apk`.
 - **Fuso horário do emulador:** se o "há X h" do porta-remédios aparecer errado, ajuste o fuso do emulador para Brasília (Configurações > Sistema > Data e hora, ou `adb shell service call alarm 3 s16 America/Sao_Paulo`). A API envia horários locais de Brasília.
 

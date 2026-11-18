@@ -32,10 +32,14 @@ class ApiClient {
   ApiClient._();
 
   static const String _urlDefinida = String.fromEnvironment("API_URL");
-  static const Duration timeout = Duration(seconds: 6);
+  static const Duration timeout = Duration(seconds: 60);
 
   static String get baseUrl {
-    if (_urlDefinida.isNotEmpty) return _urlDefinida;
+    if (_urlDefinida.isNotEmpty) {
+      return _urlDefinida.endsWith("/")
+          ? _urlDefinida.substring(0, _urlDefinida.length - 1)
+          : _urlDefinida;
+    }
     if (!kIsWeb && Platform.isAndroid) return "http://10.0.2.2:8080";
     return "http://localhost:8080";
   }
