@@ -98,22 +98,17 @@ Pré-requisitos: Flutter 3.44+ e um emulador Android, celular, Chrome ou Windows
 flutter pub get
 flutter run
 ```
-Antes, suba a API com `./mvnw spring-boot:run`. O endereço da API muda conforme a plataforma:
-- **Windows ou Chrome:** o app usa `http://localhost:8080`. Rode com `flutter run -d windows` ou `flutter run -d chrome`.
-- **Emulador Android:** o app usa `http://10.0.2.2:8080`, que é o `localhost` do computador.
-- **Celular físico na mesma rede:**
+Por padrão o app consome a API publicada no Render: `https://amparo-api-3k4p.onrender.com` (Swagger em `/swagger-ui.html`). No plano gratuito o Render desliga o serviço sem uso; a primeira chamada pode levar até 1 minuto, então abra o Swagger no navegador antes de usar o app.
+
+- **API rodando no computador** (`./mvnw spring-boot:run` no repositório da API):
 ```bash
-flutter run --dart-define=API_URL=http://IP_DO_COMPUTADOR:8080
+flutter run --dart-define=API_URL=http://10.0.2.2:8080
 ```
-- **API publicada na internet (Render):**
+  No emulador Android, `10.0.2.2` é o `localhost` do computador. No Windows ou no Chrome, use `http://localhost:8080`; no celular físico, `http://IP_DO_COMPUTADOR:8080`.
+- **Gerar o APK de release:**
 ```bash
-flutter run --dart-define=API_URL=https://SEU-SERVICO.onrender.com
+flutter build apk --release
 ```
-- **Gerar o APK de release** apontando para a API publicada:
-```bash
-flutter build apk --release --dart-define=API_URL=https://SEU-SERVICO.onrender.com
-```
-  No plano gratuito o Render desliga o serviço sem uso; a primeira chamada pode levar até 1 minuto. Abra `https://SEU-SERVICO.onrender.com/swagger-ui.html` no navegador antes de usar o app.
   O arquivo sai em `build/app/outputs/flutter-apk/app-release.apk`.
 - **Fuso horário do emulador:** se o "há X h" do porta-remédios aparecer errado, ajuste o fuso do emulador para Brasília (Configurações > Sistema > Data e hora, ou `adb shell service call alarm 3 s16 America/Sao_Paulo`). A API envia horários locais de Brasília.
 

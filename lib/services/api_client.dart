@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -31,18 +30,14 @@ class OfflineException implements Exception {}
 class ApiClient {
   ApiClient._();
 
-  static const String _urlDefinida = String.fromEnvironment("API_URL");
+  static const String _urlApi = String.fromEnvironment(
+    "API_URL",
+    defaultValue: "https://amparo-api-3k4p.onrender.com",
+  );
   static const Duration timeout = Duration(seconds: 60);
 
-  static String get baseUrl {
-    if (_urlDefinida.isNotEmpty) {
-      return _urlDefinida.endsWith("/")
-          ? _urlDefinida.substring(0, _urlDefinida.length - 1)
-          : _urlDefinida;
-    }
-    if (!kIsWeb && Platform.isAndroid) return "http://10.0.2.2:8080";
-    return "http://localhost:8080";
-  }
+  static String get baseUrl =>
+      _urlApi.endsWith("/") ? _urlApi.substring(0, _urlApi.length - 1) : _urlApi;
 
   static String? _token;
 
