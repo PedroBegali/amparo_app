@@ -40,21 +40,4 @@ class Visita {
   DateTime dataGeracao;
   String? desfecho;
   String? observacao;
-
-  Map<String, dynamic> toJson() {
-    return {
-      "id": id,
-      "pacienteId": pacienteId,
-      "pacienteNome": pacienteNome,
-      "pacienteEndereco": pacienteEndereco,
-      "agenteId": agenteId,
-      "nivelRisco": nivelRisco,
-      "score": score,
-      "motivo": motivo,
-      "status": status,
-      "dataGeracao": dataGeracao.toIso8601String(),
-      "desfecho": desfecho,
-      "observacao": observacao,
-    };
-  }
 }

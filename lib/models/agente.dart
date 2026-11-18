@@ -26,15 +26,4 @@ class Agente {
   bool get isGestor => papel == "ROLE_GESTOR_UBS";
 
   String get primeiroNome => nome.split(" ").first;
-
-  Map<String, dynamic> toJson() {
-    return {
-      "id": id,
-      "nome": nome,
-      "email": email,
-      "papel": papel,
-      "ubs": ubs,
-      "microarea": microarea,
-    };
-  }
 }

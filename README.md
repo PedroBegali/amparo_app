@@ -70,6 +70,7 @@ O tema fica em `lib/utils/cores_sus.dart` (`temaAmparo()`) e segue a direção v
 | Cinza texto | `#334155` | Textos e informações secundárias |
 
 - **Logo oficial:** `logo_amparo.png` (azul) e `logo_amparo_branca.png` (para cabeçalhos azuis), ambas com fundo transparente.
+- **Ícone do app:** `assets/icon/icone_app.png`, gerado para Android, iOS, Web e Windows com `dart run flutter_launcher_icons`.
 - **Ilustração:** `equipe_saude.png` (médica, agente e idosa) aparece no login, no Início e na tela Sobre.
 - **Tipografia:** Inter (pesos 400 a 700), empacotada em `assets/fonts`, então funciona offline.
 - **Níveis de risco:** cada um tem cor, fundo e ícone próprios. A informação nunca depende só da cor.
@@ -125,7 +126,7 @@ flutter test
 ```
 lib/
   main.dart                 tema SUS + rotas nomeadas
-  models/                   agente, paciente, kit, leitura, visita, prontuario (fromJson/toJson)
+  models/                   agente, paciente, kit, leitura, visita, prontuario (fromJson; toJson em paciente e kit)
   services/api_client.dart  HTTP + JWT + tratamento do ErroResponse da API
   repositories/             auth, visita, paciente, kit (API com fallback para mock)
   mock/mock_data.dart       dados de demonstração offline

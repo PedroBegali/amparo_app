@@ -54,20 +54,4 @@ class Leitura {
         return tipoSensor;
     }
   }
-
-  Map<String, dynamic> toJson() {
-    return {
-      "id": id,
-      "kitId": kitId,
-      "tipoSensor": tipoSensor,
-      "dataLeitura": dataLeitura.toIso8601String(),
-      "bpm": bpm,
-      "spo2": spo2,
-      "minImovel": minImovel,
-      "caixaAberta": caixaAberta,
-      "sos": sos,
-      "agitacaoNoturna": agitacaoNoturna,
-      "sinaisLeito": sinaisLeito,
-    };
-  }
 }
