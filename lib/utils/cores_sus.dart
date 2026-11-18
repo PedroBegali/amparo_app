@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 const Color azulPrincipal = Color(0xFF005EB8);
 const Color azulEscuro = Color(0xFF003B7A);
 const Color azulClaro = Color(0xFFEAF4FF);
-const Color azulLogo = Color(0xFF405AB3);
 const Color verdeApoio = Color(0xFF3FAE5A);
 const Color cinzaTexto = Color(0xFF334155);
 const Color cinzaSuave = Color(0xFF64748B);

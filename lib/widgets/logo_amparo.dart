@@ -22,7 +22,7 @@ class LogoAmparo extends StatelessWidget {
       filterQuality: FilterQuality.medium,
     );
     if (!mostrarTexto) return cruz;
-    final corTexto = clara ? Colors.white : azulLogo;
+    final corTexto = clara ? Colors.white : azulPrincipal;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
