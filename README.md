@@ -6,7 +6,7 @@
 |---|---|
 | **Grupo** | AMPARO-SUS |
 | **Integrantes** | Denise Santos - RM: 567559 · Lucas Dudena - RM: 567600 · Karen Cardoso - RM: 566870 · Pedro Begali - RM: 567478 |
-| **Vídeo (YouTube)** | _link aqui_ |
+| **Vídeo (YouTube)** | _https://youtu.be/iEAcfdAhVGU_ |
 | **APK** | aba _Releases_ deste repositório (`app-release.apk`) |
 
 ## 1. A solução
